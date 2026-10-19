@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Bath, Droplets, Flame, Gauge, Leaf, ShowerHead, Waves, Wrench } from 'lucide-react'
+import { Bath, Droplets, Flame, Gauge, ShowerHead, Waves, Wrench } from 'lucide-react'
 
 /* ------------------------------------------------------------------
    Business + contact
