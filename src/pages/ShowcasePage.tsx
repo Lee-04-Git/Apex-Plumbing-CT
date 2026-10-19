@@ -4,7 +4,7 @@ import { Gallery } from '../components/showcase/Gallery'
 
 export default function ShowcasePage() {
   return (
-    <PageShell path="/showcase">
+    <PageShell path="404">
       <PageHero
         banner="showcase"
         next="text-mist-50"

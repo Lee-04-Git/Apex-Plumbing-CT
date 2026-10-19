@@ -1,5 +1,5 @@
-import { motion, useIsPresent, useReducedMotion } from 'framer-motion'
-import { useEffect, useState, type ReactNode } from 'react'
+import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { PageHero } from '../components/layout/PageHero'
 import { PageShell } from '../components/layout/PageShell'
@@ -7,18 +7,11 @@ import { SendPhotoSection } from '../components/services/SendPhotoSection'
 import { buttonClass } from '../components/ui/buttonClass'
 import { expo } from '../components/ui/motion'
 import { ClipReveal, LineReveal, Photo, Reveal } from '../components/ui/primitives'
-import { moreServices, projects, services, type Img, type Project, type ServiceId } from '../config/site'
+import { moreServices, projects, services, type Img, type ServiceId } from '../config/site'
 import { quoteHref } from '../lib/contact'
 import { scrollToId } from '../lib/scroll'
 
 /* ─────────────────────────── Data ─────────────────────────── */
-
-/** The showcase category for each core service. */
-const showcaseCategory: Record<ServiceId, Project['category']> = {
-  electrical: 'Electric geysers',
-  solar: 'Solar geysers',
-  maintenance: 'Repairs & maintenance',
-}
 
 /** The job photos shown with each service: [project slug, photo index, framing]. */
 const gallery: Record<ServiceId, [slug: string, img: number, position?: string][]> = {
@@ -180,7 +173,6 @@ function SectionNav() {
 /** One service: its details on one side and a mosaic of its job photos on the other. */
 function ServiceDetail({ s, i }: { s: (typeof services)[number]; i: number }) {
   const photos = photosFor(s.id)
-  const category = showcaseCategory[s.id]
 
   return (
     <section
@@ -223,7 +215,7 @@ function ServiceDetail({ s, i }: { s: (typeof services)[number]; i: number }) {
 
         {/* photos: one wide shot over two side by side (or a pair when there are only two) */}
         <ul className="grid grid-cols-2 gap-3 self-start sm:gap-5 lg:col-span-7">
-          {photos.map(({ image, job, place }, n) => {
+          {photos.map(({ image }, n) => {
             const wide = photos.length === 3 && n === 0
             return (
               <li key={image.base} className={wide ? 'col-span-2' : ''}>
