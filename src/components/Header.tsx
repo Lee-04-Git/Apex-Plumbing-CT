@@ -1,5 +1,4 @@
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion'
-import { ArrowRight, Mail, Phone } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, NavLink, useLocation } from 'react-router-dom'
@@ -16,11 +15,11 @@ export function Wordmark({ tone, logo = true }: { tone: 'light' | 'dark'; logo?:
     <span className="flex items-center gap-3">
       {logo && (
         <img
-          src={onDark ? site.logo.white : site.logo.navy}
+          src={onDark ? site.logo.light : site.logo.color}
           alt=""
           width={44}
           height={44}
-          className={`size-10 shrink-0 transition-all duration-700 ease-out-expo group-hover:rotate-[-18deg] sm:size-11 rounded-full object-cover ${onDark ? 'brightness-110 contrast-90' : 'brightness-100'}`}
+          className="size-10 shrink-0 object-contain transition-transform duration-700 ease-out-expo group-hover:-translate-y-0.5 group-hover:-rotate-6 sm:size-11"
         />
       )}
       <span className="flex flex-col leading-none">
@@ -34,25 +33,19 @@ export function Wordmark({ tone, logo = true }: { tone: 'light' | 'dark'; logo?:
   )
 }
 
-/** Two bars that morph into a cross */
+/** Three lines that turn into a cross when the menu is open. */
 function MenuIcon({ open }: { open: boolean }) {
+  const bar = 'absolute left-0 h-[2px] w-full rounded-full bg-current transition-[transform,opacity] duration-300 ease-out-expo'
   return (
-    <span aria-hidden="true" className="relative block h-3 w-6">
-      <motion.span
-        className="absolute left-0 h-[2px] w-6 rounded-full bg-current"
-        animate={open ? { top: 5, rotate: 45 } : { top: 0, rotate: 0 }}
-        transition={{ duration: 0.35, ease: expo }}
-      />
-      <motion.span
-        className="absolute right-0 h-[2px] rounded-full bg-current"
-        animate={open ? { top: 5, rotate: -45, width: 24 } : { top: 10, rotate: 0, width: 16 }}
-        transition={{ duration: 0.35, ease: expo }}
-      />
+    <span aria-hidden="true" className="relative block h-4 w-6">
+      <span className={`${bar} top-0 ${open ? 'translate-y-[7px] rotate-45' : ''}`} />
+      <span className={`${bar} top-[7px] ${open ? 'opacity-0' : ''}`} />
+      <span className={`${bar} top-[14px] ${open ? '-translate-y-[7px] -rotate-45' : ''}`} />
     </span>
   )
 }
 
-/** Desktop links: an orange bar slides under the active page; others get a hover underline. */
+/** Desktop links: a plum bar slides under the active page; others get a hover underline. */
 function DesktopNav({ onDark }: { onDark: boolean }) {
   return (
     <nav aria-label="Main" className="hidden lg:block">
@@ -81,7 +74,7 @@ function DesktopNav({ onDark }: { onDark: boolean }) {
                     <motion.span
                       layoutId="nav-active"
                       transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                      className="absolute inset-x-3 bottom-1 h-[3px] rounded-full bg-signal-500 xl:inset-x-4"
+                      className="absolute inset-x-3 bottom-1 h-[3px] rounded-full bg-plum-500 xl:inset-x-4"
                     />
                   ) : (
                     <span
@@ -155,7 +148,7 @@ export function Header() {
           open
             ? 'bg-navy-950'
             : scrolled
-              ? 'bg-white/90 shadow-[0_1px_0_rgb(10_27_48/0.08),0_10px_30px_-18px_rgb(10_27_48/0.35)] backdrop-blur-xl'
+              ? 'bg-white/90 shadow-[0_1px_0_rgb(13_18_56/0.08),0_10px_30px_-18px_rgb(13_18_56/0.35)] backdrop-blur-xl'
               : 'bg-transparent'
         }`}
       >
@@ -181,8 +174,8 @@ export function Header() {
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? 'Close menu' : 'Open menu'}
-              className={`inline-flex size-12 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 lg:hidden ${
-                onDark ? 'bg-white/10 text-white ring-1 ring-white/25 backdrop-blur' : 'bg-navy-950 text-white'
+              className={`-mr-2 inline-flex size-12 cursor-pointer items-center justify-center transition-colors duration-300 lg:hidden ${
+                onDark ? 'text-white' : 'text-navy-950'
               }`}
             >
               <MenuIcon open={open} />
@@ -194,7 +187,7 @@ export function Header() {
         <motion.div
           aria-hidden="true"
           style={{ scaleX: progress }}
-          className={`absolute inset-x-0 bottom-0 h-[2px] origin-left bg-signal-500 transition-opacity duration-300 ${
+          className={`absolute inset-x-0 bottom-0 h-[2px] origin-left bg-plum-500 transition-opacity duration-300 ${
             scrolled && !open ? 'opacity-100' : 'opacity-0'
           }`}
         />
@@ -211,13 +204,21 @@ export function Header() {
               transition={{ duration: 0.6, ease: expo }}
               className="fixed inset-x-0 top-[4.75rem] bottom-0 z-[55] overflow-y-auto bg-navy-950 lg:hidden"
             >
-              <nav aria-label="Mobile" className="container-site relative flex min-h-full flex-col pt-4 pb-24">
+              {/* faint droplet in the corner, like the footer */}
+              <img
+                src={site.logo.light}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none fixed -right-20 -bottom-24 w-80 -rotate-12 opacity-[0.05]"
+              />
+              <nav aria-label="Mobile" className="container-site relative flex min-h-full flex-col pt-6 pb-10">
                 <motion.ul
                   initial="hidden"
                   animate="show"
                   variants={{ show: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } } }}
+                  className="border-t border-white/10"
                 >
-                  {navLinks.map((link, i) => (
+                  {navLinks.map((link) => (
                     <li key={link.path} className="overflow-hidden border-b border-white/10">
                       <motion.div
                         variants={{
@@ -229,23 +230,22 @@ export function Header() {
                           to={link.path}
                           end={link.path === '/'}
                           onClick={() => setOpen(false)}
-                          className="group flex items-center justify-between py-4"
+                          className="group flex items-center gap-4 py-5"
                         >
                           {({ isActive }) => (
                             <>
-                              <span className="flex items-baseline gap-4">
-                                <span className="label text-navy-300">0{i + 1}</span>
-                                <span
-                                  className={`font-display text-[2.25rem] leading-none font-extrabold tracking-[-0.04em] transition-colors ${isActive ? 'text-signal-400' : 'text-white group-active:text-signal-300'}`}
-                                >
-                                  {link.label}
-                                </span>
+                              {/* short plum bar marks the current page */}
+                              <span
+                                aria-hidden="true"
+                                className={`h-6 w-1 shrink-0 rounded-sm transition-colors ${isActive ? 'bg-plum-400' : 'bg-transparent'}`}
+                              />
+                              <span
+                                className={`font-display text-[1.75rem] leading-none font-bold tracking-[-0.02em] transition-colors ${
+                                  isActive ? 'text-white' : 'text-navy-200 group-hover:text-white group-active:text-white'
+                                }`}
+                              >
+                                {link.label}
                               </span>
-                              {isActive ? (
-                                <span aria-hidden="true" className="size-2.5 rounded-full bg-signal-500" />
-                              ) : (
-                                <ArrowRight aria-hidden="true" className="size-5 text-navy-300" />
-                              )}
                             </>
                           )}
                         </NavLink>
@@ -253,30 +253,38 @@ export function Header() {
                     </li>
                   ))}
                 </motion.ul>
+
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0, transition: { delay: 0.35, ease: expo, duration: 0.6 } }}
-                  className="mt-auto grid gap-3 pt-10"
+                  animate={{ opacity: 1, y: 0, transition: { delay: 0.3, ease: expo, duration: 0.6 } }}
+                  className="mt-auto pt-12"
                 >
-                  <a
-                    href={whatsappHref(defaultWhatsAppMessage)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={buttonClass('whatsapp', 'lg')}
-                  >
-                    <WhatsAppIcon className="size-5" />
-                    Chat on WhatsApp
+                  <p className="text-sm text-navy-300">Get in touch</p>
+                  <a href={telHref} className="mt-2 block font-display text-[1.75rem] leading-tight font-bold text-white">
+                    {site.phone.display}
                   </a>
-                  <div className="grid grid-cols-2 gap-3">
-                    <a href={telHref} className={buttonClass('outline-light', 'lg')}>
-                      <Phone aria-hidden="true" className="size-4" />
-                      Call
+                  <a href={mailtoHref} className="mt-1 block text-lg text-navy-200 [overflow-wrap:anywhere]">
+                    {site.email.address}
+                  </a>
+
+                  <div className="mt-7 grid grid-cols-2 gap-3">
+                    <a
+                      href={whatsappHref(defaultWhatsAppMessage)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={buttonClass('whatsapp', 'lg')}
+                    >
+                      <WhatsAppIcon className="size-5" />
+                      WhatsApp
                     </a>
-                    <a href={mailtoHref} className={buttonClass('outline-light', 'lg')}>
-                      <Mail aria-hidden="true" className="size-4" />
-                      Email
+                    <a href={telHref} className={buttonClass('accent', 'lg')}>
+                      Call now
                     </a>
                   </div>
+
+                  <p className="mt-8 border-t border-white/10 pt-5 text-sm text-navy-300">
+                    Based in {site.location.suburb}, {site.location.area}
+                  </p>
                 </motion.div>
               </nav>
             </motion.div>

@@ -37,13 +37,13 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <a
         href="#main"
-        className="sr-only z-[60] rounded-full bg-navy-950 px-4 py-2 font-medium text-mist-50 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        className="sr-only z-[60] rounded-sm bg-navy-950 px-4 py-2 font-medium text-mist-50 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
         Skip to content
       </a>
       <Header />
       <main id="main">
-        {/* Wait for the old page's water to fill the screen, then jump to the top before the new page drains in. */}
+        {/* Fade the old page out, jump to the top, then fade the new page in. */}
         <AnimatePresence mode="wait" onExitComplete={scrollToTop}>
           <PageErrorBoundary key={location.pathname}>
             <Suspense fallback={<div className="min-h-svh bg-navy-900" />}>

@@ -5,9 +5,8 @@ import { expo, PAGE_IN } from '../ui/motion'
 import { Eyebrow, LineReveal } from '../ui/primitives'
 import { Banner } from './Banner'
 
-/** Opening for inner pages: a photo banner with the page number, a big headline and one line of intro. */
+/** Opening for inner pages: a photo banner with the page label, a big headline and one line of intro. */
 export function PageHero({
-  index,
   label,
   lines,
   intro,
@@ -15,20 +14,22 @@ export function PageHero({
   banner,
   next,
   eyebrow = true,
+  duotone = false,
 }: {
-  index: string
   label: string
   lines: ReactNode[]
   intro?: ReactNode
   aside?: ReactNode
   banner: BannerKey
-  /** Background colour class of the section that follows (for the wave edge). */
+  /** Background colour class of the section that follows (for the slanted edge). */
   next?: string
-  /** Show the small "index · label" line above the headline. */
+  /** Show the small label line above the headline. */
   eyebrow?: boolean
+  /** Navy/plum duotone treatment for the banner photo. */
+  duotone?: boolean
 }) {
   return (
-    <Banner image={banner} next={next}>
+    <Banner image={banner} next={next} duotone={duotone}>
       <div className="container-site grid gap-10 pt-16 pb-24 sm:pt-24 sm:pb-28 lg:grid-cols-12 lg:items-end lg:pt-32 lg:pb-36">
         <div className="lg:col-span-8">
           {eyebrow && (
@@ -37,9 +38,7 @@ export function PageHero({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: expo, delay: PAGE_IN }}
             >
-              <Eyebrow tone="dark">
-                {index} · {label}
-              </Eyebrow>
+              <Eyebrow tone="dark">{label}</Eyebrow>
             </motion.div>
           )}
           <h1 className={`display text-[clamp(3rem,8.4vw,7.25rem)] text-white ${eyebrow ? 'mt-6' : ''}`}>

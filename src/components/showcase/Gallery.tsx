@@ -69,7 +69,7 @@ export function Gallery() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => choose(c)}
-                  className={`relative min-h-11 shrink-0 cursor-pointer rounded-full px-5 text-[0.9375rem] font-semibold whitespace-nowrap transition-colors ${
+                  className={`relative min-h-11 shrink-0 cursor-pointer rounded-sm px-5 text-[0.9375rem] font-semibold whitespace-nowrap transition-colors ${
                     active ? 'text-white' : 'text-steel-600 hover:bg-navy-950/[0.05] hover:text-navy-950'
                   }`}
                 >
@@ -77,7 +77,7 @@ export function Gallery() {
                     <motion.span
                       layoutId="showcase-tab"
                       transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                      className="absolute inset-0 rounded-full bg-navy-950"
+                      className="absolute inset-0 rounded-sm bg-navy-950"
                     />
                   )}
                   <span className="relative">{c === 'All' ? 'All work' : c}</span>
@@ -132,7 +132,7 @@ export function Gallery() {
 
         {/* sign-off: send a photo of your own job */}
         <Reveal className="mt-20 sm:mt-28">
-          <div className="relative grid items-center gap-12 overflow-hidden rounded-[2rem] bg-[#e8f9ef] px-6 py-12 sm:px-12 sm:py-16 lg:grid-cols-12 lg:gap-10 lg:px-16">
+          <div className="relative grid items-center gap-12 overflow-hidden rounded-md bg-[#e8f9ef] px-6 py-12 sm:px-12 sm:py-16 lg:grid-cols-12 lg:gap-10 lg:px-16">
             {/* soft green glow for depth */}
             <div
               aria-hidden="true"
@@ -169,7 +169,7 @@ export function Gallery() {
 
             {/* what you'd send: a little WhatsApp chat preview */}
             <div aria-hidden="true" className="relative lg:col-span-5">
-              <div className="mx-auto w-full max-w-[20rem] rotate-2 overflow-hidden rounded-[1.75rem] bg-[#efeae2] shadow-[0_30px_60px_-30px_rgb(10_27_48/0.45)] ring-1 ring-black/5 transition-transform duration-500 ease-out-expo hover:rotate-0 lg:mr-0">
+              <div className="mx-auto w-full max-w-[20rem] rotate-2 overflow-hidden rounded-md bg-[#efeae2] shadow-[0_30px_60px_-30px_rgb(13_18_56/0.45)] ring-1 ring-black/5 transition-transform duration-500 ease-out-expo hover:rotate-0 lg:mr-0">
                 <div className="flex items-center gap-3 bg-[#075e54] px-4 py-3 text-white">
                   <span className="flex size-9 items-center justify-center rounded-full bg-white/15">
                     <WhatsAppIcon className="size-4" />

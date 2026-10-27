@@ -11,5 +11,8 @@ export const staggerChild = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: expo } },
 }
 
-/** Delay for on-load animations so they play as the page-transition curtain lifts. */
-export const PAGE_IN = 0.35
+/** Delay for on-load animations so they start as the page fades in. */
+export const PAGE_IN = 0.1
+
+/** Tilted straight edges (viewBox 0 0 1440 60): `up` rises from left to right, `down` falls. */
+export const slantPaths = { up: 'M0 60 L1440 0 V60 H0 Z', down: 'M0 0 L1440 60 H0 Z' } as const

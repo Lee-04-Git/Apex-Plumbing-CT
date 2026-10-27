@@ -1,8 +1,8 @@
 import { motion, type HTMLMotionProps } from 'framer-motion'
 import { Star } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { WORK_WIDTHS } from '../../config/site'
-import { expo } from './motion'
+import { BACKGROUND_WIDTHS, backgrounds, WORK_WIDTHS, type BackgroundKey } from '../../config/site'
+import { expo, slantPaths } from './motion'
 
 /** Small fade-and-lift for supporting content (8–16px). */
 export function Reveal({
@@ -101,7 +101,7 @@ export function ClipReveal({
   )
 }
 
-/** Mono eyebrow with a short "pipe" leading into it. */
+/** Mono eyebrow led by two slanted bars, echoing the tilted section edges. */
 export function Eyebrow({
   children,
   tone = 'light',
@@ -112,16 +112,17 @@ export function Eyebrow({
   className?: string
 }) {
   return (
-    <p className={`label flex items-center gap-3 ${tone === 'dark' ? 'text-signal-300' : 'text-brand-600'} ${className}`}>
-      <span aria-hidden="true" className="relative h-[3px] w-8 rounded-full bg-current">
-        <span className="absolute -top-[3px] -right-[3px] size-[9px] rounded-full border-2 border-current bg-transparent" />
+    <p className={`label flex items-center gap-3 ${tone === 'dark' ? 'text-plum-300' : 'text-brand-600'} ${className}`}>
+      <span aria-hidden="true" className="flex gap-[3px]">
+        <span className="h-3 w-[5px] -skew-x-[24deg] bg-current" />
+        <span className="h-3 w-[5px] -skew-x-[24deg] bg-current opacity-50" />
       </span>
       {children}
     </p>
   )
 }
 
-/** Hand-drawn style stroke that draws itself under a word. */
+/** Straight, slightly rising stroke that draws itself under a word. */
 export function Underline({ delay = 0, onLoad = false, className = '' }: { delay?: number; onLoad?: boolean; className?: string }) {
   const trigger = onLoad ? { animate: { pathLength: 1 } } : { whileInView: { pathLength: 1 }, viewport: { once: true } }
   return (
@@ -129,32 +130,32 @@ export function Underline({ delay = 0, onLoad = false, className = '' }: { delay
       aria-hidden="true"
       viewBox="0 0 300 24"
       preserveAspectRatio="none"
-      className={`pointer-events-none absolute -bottom-[0.08em] left-0 h-[0.22em] w-full overflow-visible ${className}`}
+      className={`pointer-events-none absolute -bottom-[0.1em] left-0 h-[0.2em] w-full overflow-visible ${className}`}
     >
       <motion.path
-        d="M3 15 C 60 5, 120 5, 170 12 S 260 20, 297 8"
+        d="M2 18 L298 7"
         fill="none"
         stroke="currentColor"
-        strokeWidth="7"
-        strokeLinecap="round"
+        strokeWidth="8"
+        strokeLinecap="butt"
         initial={{ pathLength: 0 }}
         {...trigger}
-        transition={{ duration: 1.1, ease: expo, delay }}
+        transition={{ duration: 0.9, ease: expo, delay }}
       />
     </svg>
   )
 }
 
-/** Wavy section edge, so colour blocks meet like a waterline instead of a hard cut. */
-export function WaveEdge({ className = '', flip = false }: { className?: string; flip?: boolean }) {
+/** Straight section edge with a slight tilt, so colour blocks meet on an angle instead of a flat cut. */
+export function SlantEdge({ className = '', dir = 'up' }: { className?: string; dir?: keyof typeof slantPaths }) {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 1440 60"
       preserveAspectRatio="none"
-      className={`pointer-events-none absolute inset-x-0 h-8 w-full sm:h-12 ${flip ? 'top-0 rotate-180' : 'top-px -translate-y-full'} ${className}`}
+      className={`pointer-events-none absolute inset-x-0 top-px h-8 w-full -translate-y-full sm:h-12 lg:h-16 ${className}`}
     >
-      <path fill="currentColor" d="M0 36 C 240 0, 420 0, 720 30 S 1200 60, 1440 22 V60 H0 Z" />
+      <path fill="currentColor" d={slantPaths[dir]} />
     </svg>
   )
 }
@@ -166,10 +167,62 @@ export function Stars({ rating = 5, className = '' }: { rating?: number; classNa
         <Star
           key={i}
           aria-hidden="true"
-          className={`size-4 ${i < rating ? 'fill-signal-400 text-signal-400' : 'text-mist-300'}`}
+          className={`size-4 ${i < rating ? 'fill-plum-400 text-plum-400' : 'text-mist-300'}`}
         />
       ))}
     </span>
+  )
+}
+
+/**
+ * A photo shown very faintly in duotone behind a section; the section needs `relative isolate`.
+ * `side` is where the photo shows most; it fades out towards the other side so text stays clean.
+ */
+export function FaintImage({
+  image,
+  tone = 'light',
+  side = 'right',
+  strength = 'soft',
+  className = '',
+}: {
+  image: BackgroundKey
+  tone?: 'light' | 'dark'
+  side?: 'left' | 'right' | 'full'
+  /** `medium` shows the photo a little more clearly. */
+  strength?: 'soft' | 'medium'
+  className?: string
+}) {
+  const { base, position } = backgrounds[image]
+  // Two fades, intersected: across (towards the text) and down (so the photo never ends in a hard line).
+  const across = {
+    right: 'linear-gradient(to left, black 15%, transparent 85%)',
+    left: 'linear-gradient(to right, black 15%, transparent 85%)',
+    full: 'linear-gradient(black, black)',
+  }[side]
+  const fade = `${across}, linear-gradient(to bottom, transparent, black 20%, black 45%, transparent 90%)`
+  return (
+    <div aria-hidden="true" className={`pointer-events-none absolute inset-0 -z-10 overflow-hidden ${className}`}>
+      <img
+        src={`${base}-${BACKGROUND_WIDTHS[0]}.webp`}
+        srcSet={BACKGROUND_WIDTHS.map((w) => `${base}-${w}.webp ${w}w`).join(', ')}
+        sizes="100vw"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className={`size-full object-cover grayscale ${
+          tone === 'dark'
+            ? `${strength === 'medium' ? 'opacity-[0.24]' : 'opacity-[0.16]'} mix-blend-luminosity`
+            : `${strength === 'medium' ? 'opacity-[0.18]' : 'opacity-[0.1]'} mix-blend-multiply contrast-[1.15]`
+        }`}
+        style={{
+          objectPosition: position,
+          maskImage: fade,
+          WebkitMaskImage: fade,
+          maskComposite: 'intersect',
+          WebkitMaskComposite: 'source-in',
+        }}
+      />
+    </div>
   )
 }
 

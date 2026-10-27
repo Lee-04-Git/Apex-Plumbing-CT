@@ -1,3 +1,4 @@
+import { AboutCta } from '../components/about/AboutCta'
 import { Process } from '../components/about/Process'
 import { Reviews } from '../components/about/Reviews'
 import { Story } from '../components/about/Story'
@@ -11,21 +12,22 @@ export default function AboutPage() {
     <PageShell path="/about">
       <PageHero
         banner="about"
+        duotone
         next="text-mist-50"
-        index="02"
         label="About us"
         lines={[
-          'Local plumbers,',
-          <span key="a" className="text-signal-400">
-            doing it right.
+          'Your local',
+          <span key="a" className="text-plum-300">
+            Cape Town plumbers.
           </span>,
         ]}
-        intro={`A plumbing business based in ${site.location.suburb}, ${site.location.area}, specialising in electrical and solar geyser installations and plumbing maintenance.`}
+        intro={`A ${site.location.suburb} plumbing business taking on all sorts of plumbing work across ${site.location.area}, from noisy pipes to full-on renovations.`}
       />
       <Story />
       <Values />
       <Process />
       <Reviews />
+      <AboutCta />
     </PageShell>
   )
 }

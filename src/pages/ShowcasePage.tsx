@@ -9,11 +9,10 @@ export default function ShowcasePage() {
         banner="showcase"
         next="text-mist-50"
         eyebrow={false}
-        index="04"
         label="Showcase"
         lines={[
           'Our work,',
-          <span key="a" className="text-signal-400">
+          <span key="a" className="text-plum-400">
             up close.
           </span>,
         ]}

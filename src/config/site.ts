@@ -9,7 +9,7 @@
  *  Values marked `confirmed: false` still need the owner's confirmation (not shown on the site).
  */
 
-export type ServiceId = 'electrical' | 'solar' | 'maintenance'
+export type ServiceId = 'geysers' | 'leaks' | 'bathrooms'
 
 /** Responsive widths produced by scripts/optimize-images.mjs for job photos */
 export const WORK_WIDTHS = [480, 800, 1200]
@@ -18,16 +18,25 @@ const work = (name: string, alt: string, position?: string): Img => ({ base: `/i
 
 export const site = {
   name: 'Apex Plumbing CT',
-  /** From the business's own Facebook intro. */
-  description: 'Specialist in electrical and solar geyser installations as well as plumbing maintenance.',
-  tagline: 'Plumbing & maintenance services', // FB flyer
+  /** The business's own words on its ProCompare profile (Oct 2026). */
+  description: 'We deal with all sorts of plumbing issues, from noisy pipes to full-on renovations.',
+  tagline: 'At the top of our game', // ProCompare profile
   /** The business's own words in its Aug 2026 Facebook post. Confirm before launch. */
   team: { text: 'trade tested plumbers', confirmed: false },
 
   logo: {
-    /** Logo from the Facebook profile, converted to transparent PNGs. */
-    navy: '/apex.jpg',
-    white: '/apex.jpg',
+    /** The Apex droplet from the Facebook profile, cut out to transparent PNGs by `npm run images`. */
+    color: '/images/logo-color.png',
+    light: '/images/logo-light.png',
+  },
+
+  /**
+   * The plumber customers name in their reviews. Photo supplied by the client
+   * (assets/source/damian.png + damian-mask.png), cut out by `npm run images` at these widths.
+   */
+  owner: {
+    name: 'Damien',
+    photo: { base: '/images/team/damian', widths: [560, 1120], width: 1119, height: 1405 },
   },
 
   /** Primary business number, confirmed (Oct 2026). */
@@ -79,112 +88,91 @@ export const site = {
   hours: null as { days: string; time: string }[] | null,
 }
 
-/** The three specialities named in the Facebook intro. */
+const stock = (name: string, alt: string, position?: string): Img => ({ base: `/images/home/${name}`, alt, position })
+
+/**
+ * The three core services. Sources: the business's Google listing (leak detection, pipe and leak
+ * repair, shower, tap and toilet installation and repair, geyser and water heater installation),
+ * its About text (water leak detection, turnkey bathroom renovations, electrical and solar geyser
+ * installations) and its ProCompare profile. Photos are professional stock (free Unsplash License,
+ * see README) until the business's own photos are added.
+ */
 export const services: {
   id: ServiceId
   title: string
   short: string
   body: string
   detail: string
-  /** What the service covers: only items from the business's own description, flyer and job posts. */
+  /** What the service covers: only items from the sources above. */
   includes: string[]
   image: Img
+  /** Smaller second photo shown overlapping the main one on the Services page. */
+  inset: Img
 }[] = [
   {
-    id: 'electrical',
-    title: 'Electrical Geyser Installations',
-    short: 'Electrical geysers',
-    body: 'Installation of new electrical geysers and replacement or relocation of old units.',
+    id: 'geysers',
+    title: 'Geysers & Water Heaters',
+    short: 'Geysers',
+    body: 'Installation and replacement of electric and solar geysers and water heaters, for homes and businesses.',
     detail:
-      'Recent work includes a 150 L electric geyser moved to an outside wall with new copper pipework. Describe your current set-up and it can be assessed and quoted.',
+      'Tell us about your current geyser and where it’s installed, and the job can be assessed and quoted before any work starts.',
     includes: [
-      'New electric geyser installations',
-      'Replacing old geysers',
-      'Moving a geyser, for example to an outside wall',
-      'New copper pipework and connections',
-    ],
-    image: work(
-      'geyser-relocation-01',
-      'A 150 litre electric geyser mounted on an outside wall with new copper pipework',
-      '50% 40%',
-    ),
-  },
-  {
-    id: 'solar',
-    title: 'Solar Geyser Installations',
-    short: 'Solar geysers',
-    body: 'Solar geyser installations, replacements and electric-to-solar conversions.',
-    detail:
-      'Solar water heating can reduce how much grid electricity goes into heating water. Geyserwise controllers and heat pumps are also installed. Ask which option suits your home.',
-    includes: [
+      'Electric geyser installations',
       'Solar geyser installations',
-      'Solar geyser replacements',
-      'Electric-to-solar conversions',
-      'Geyserwise controllers',
-      'Heat pumps',
+      'Geyser replacements',
+      'Water heater installations',
     ],
-    image: work(
-      'solar-diepriver-01',
-      'Flat-panel solar geyser installed on a tiled roof under a clear blue sky',
-      '50% 45%',
-    ),
+    image: stock('electrical-geyser', 'Plumber tightening a fitting on an electric geyser with a wrench', '50% 40%'),
+    inset: stock('solar-geyser', 'Solar geyser tanks and flat-panel collectors on a rooftop', '70% 75%'),
   },
   {
-    id: 'maintenance',
-    title: 'Plumbing Maintenance',
-    short: 'Plumbing maintenance',
-    body: 'Everyday plumbing maintenance and repairs, from burst pipes to blocked drains and leaking cisterns.',
+    id: 'leaks',
+    title: 'Leak Detection & Pipe Repairs',
+    short: 'Leaks & pipes',
+    body: 'Finding hidden water leaks and repairing damaged, burst and leaking pipes before they cause more damage.',
     detail:
-      'Tell us what’s going on when you get in touch, and the job can be assessed and quoted before any work begins.',
+      'If your water bill has jumped, or you can hear water running when everything is off, leak detection can track down where it’s going.',
+    includes: ['Water leak detection', 'Leak repairs', 'Burst and damaged pipe repairs', 'Noisy pipes'],
+    image: stock('plumbing-maintenance', 'Plumber fitting a waste pipe under a basin', '38% 60%'),
+    inset: stock('copper-pipework', 'Two neatly run copper pipes in an opened wall', '50% 45%'),
+  },
+  {
+    id: 'bathrooms',
+    title: 'Bathrooms, Taps & Toilets',
+    short: 'Bathrooms',
+    body: 'Turnkey bathroom renovations, plus installing and repairing showers, taps and toilets.',
+    detail: 'From a leaking cistern to a full bathroom renovation, the job is assessed and quoted first.',
     includes: [
-      'Burst pipe repairs',
-      'Blocked drains',
-      'Leaking cisterns and float valves',
-      'Taps and kitchen mixers',
-      'Sinks and outdoor plumbing',
+      'Turnkey bathroom renovations',
+      'Shower installation and repairs',
+      'Tap installation and repairs',
+      'Toilet installation and repairs',
     ],
-    image: work('burst-portlands-01', 'New water supply pipe being fitted during a burst pipe repair', '50% 60%'),
+    image: stock('modern-bathroom', 'Modern bathroom with a glass shower, vanity and wooden floor', '50% 50%'),
+    inset: stock('bathroom-renovation', 'Renovated bathroom with a glass shower, marble tiles and brass fittings', '40% 55%'),
   },
 ]
 
-/** Additional services, as listed on the business's own FB flyer (Mar 2026). */
 /**
- * Additional services, as listed on the business's own FB flyer (Mar 2026). Each card on the
- * Services page uses `image`; to use a different picture (e.g. a generated illustration), put
- * a WebP in public/images/ and point `image.base` at it (see `WORK_WIDTHS` for the sizes needed).
+ * Other services. Sources: the Google listing (drain cleaning, outdoor plumbing system repair, water
+ * tank installation and repair), a customer review (emergency plumbing), the About text (residential
+ * and commercial properties, comprehensive plumbing maintenance).
  */
-export const moreServices: { title: string; text: string; image: Img }[] = [
-  {
-    title: 'Burst pipe repairs',
-    text: 'Finding and repairing burst supply pipes, including pipes that run underground.',
-    image: work('burst-morgans-01', 'Trench dug along a wall to reach a burst underground pipe', '50% 60%'),
-  },
-  {
-    title: 'Blocked drains',
-    text: 'Clearing blocked drains so water runs away freely again.',
-    image: work('outdoor-sink-01', 'Outdoor double sink with its waste and drainage pipework'),
-  },
-  {
-    title: 'Bathroom renovations',
-    text: 'Bathroom plumbing for renovations, from toilets and basins to showers and baths.',
-    image: work('bathroom-clawfoot-01', 'Renovated bathroom with a clawfoot bath and brass taps'),
-  },
-  {
-    title: 'Geyserwise unit installation',
-    text: 'Fitting Geyserwise controllers to monitor and control your geyser.',
-    image: work('solar-surrey-02', 'Inside of a Geyserwise geyser controller during installation'),
-  },
-  {
-    title: 'Heat pump installation',
-    text: 'Installing heat pumps for heating your home’s water.',
-    image: work('solar-maitland-02', 'Hot water tank mounted on a steel stand on a rooftop', '50% 40%'),
-  },
-  {
-    title: 'COC certificates',
-    text: 'Plumbing certificates of compliance (COC) for your property.',
-    image: work('water-meters-saltriver-01', 'Water meters and supply pipework installed in a ceiling void', '50% 70%'),
-  },
+export const moreServices: { title: string; text: string }[] = [
+  { title: 'Drain cleaning', text: 'Clearing blocked drains so water runs away freely again.' },
+  { title: 'Outdoor plumbing', text: 'Repairs and maintenance of outdoor pipes, taps and plumbing systems.' },
+  { title: 'Water tanks', text: 'Installing water storage tanks with their plumbing connections, and repairing leaking tanks.' },
+  { title: 'Emergency plumbing', text: 'Urgent plumbing problems, from burst pipes to major leaks.' },
+  { title: 'Commercial plumbing', text: 'Plumbing work for commercial properties as well as homes.' },
+  { title: 'General maintenance', text: 'Everyday plumbing maintenance to keep your water systems safe and working.' },
 ]
+
+/** Photos for the home-page "Why call Apex" cards (free Unsplash License; see README). */
+export const homeImages: Record<'renovation' | 'communication' | 'workmanship', Img> = {
+  renovation: stock('bathroom-renovation', 'Renovated bathroom with a glass shower, marble tiles and brass fittings', '40% 55%'),
+  communication: stock('phone-call', 'Close-up of hands holding a smartphone', '55% 50%'),
+  workmanship: stock('copper-pipework', 'Two neatly run copper pipes in an opened wall', '50% 45%'),
+}
 
 export type Project = {
   slug: string
@@ -428,15 +416,50 @@ export const BANNER_WIDTHS = [960, 1600]
  * update the alt text here.
  */
 export const banners: Record<BannerKey, Img> = {
-  home: { base: '/images/banners/home', alt: 'Solar geysers on a Maitland rooftop with Table Mountain behind', position: '50% 30%' },
-  about: { base: '/images/banners/about', alt: 'Blue supply pipes running past water tanks, with Table Mountain in the distance' },
-  services: { base: '/images/banners/services', alt: 'Flat-panel solar geyser on a tiled roof in Diep River' },
+  /** Sea Point from Lion's Head. Photo: Brent Ninaber on Unsplash (free Unsplash License). */
+  home: { base: '/images/banners/home', alt: 'Sea Point and the Atlantic coastline seen from Lion’s Head', position: '40% 50%' },
+  /** Bantry Bay and Sea Point at golden hour. Photo: Tim Johnson on Unsplash (free Unsplash License). */
+  about: { base: '/images/banners/about', alt: 'Apartment blocks above the rocky Atlantic coastline near Sea Point at sunset', position: '50% 65%' },
+  /** Plumber at work in a modern bathroom. Photo: Unsplash (free Unsplash License). */
+  services: { base: '/images/banners/services', alt: 'Plumber in overalls with a toolbox, working in a modern bathroom', position: '70% 40%' },
   showcase: { base: '/images/banners/showcase', alt: 'Renovated bathroom with a clawfoot bath and brass taps' },
-  contact: { base: '/images/banners/contact', alt: 'Rooftops in Surrey Estate under an open sky, with a newly fitted solar panel' },
+  /** Chrome kitchen mixer tap with water splashing into a glass. Photo: Unsplash (free Unsplash License). */
+  contact: { base: '/images/banners/contact', alt: 'Chrome kitchen mixer tap with water splashing into a glass', position: '65% 50%' },
+}
+
+export type BackgroundKey =
+  | 'footer'
+  | 'services-overview'
+  | 'services-how'
+  | 'services-more'
+  | 'about-values'
+  | 'about-process'
+  | 'home-services'
+  | 'contact-form'
+
+/** Widths produced for faint backgrounds by scripts/optimize-images.mjs */
+export const BACKGROUND_WIDTHS = [960, 1600]
+
+/**
+ * Photos shown very faintly (duotone, low opacity) behind the footer and some sections. They are
+ * decorative, so they have no alt text. To use an official photo from the Apex Facebook page, save
+ * it as assets/source/backgrounds/<key>.jpg and run `npm run images`; until then a job photo
+ * stands in (see BACKGROUNDS in scripts/optimize-images.mjs). `position` sets the framing.
+ */
+export const backgrounds: Record<BackgroundKey, { base: string; position?: string }> = {
+  footer: { base: '/images/backgrounds/footer', position: '50% 55%' },
+  'services-overview': { base: '/images/backgrounds/services-overview', position: '50% 30%' },
+  'services-how': { base: '/images/backgrounds/services-how' },
+  'services-more': { base: '/images/backgrounds/services-more' },
+  'about-values': { base: '/images/backgrounds/about-values', position: '50% 50%' },
+  'about-process': { base: '/images/backgrounds/about-process', position: '40% 50%' },
+  'home-services': { base: '/images/backgrounds/home-services', position: '50% 40%' },
+  /** Brushed-steel designer tap over a white basin. Photo: Unsplash (free Unsplash License). */
+  'contact-form': { base: '/images/backgrounds/contact-form', position: '0% 40%' },
 }
 
 export const navLinks = [
-  { path: '/', label: 'Home', title: 'Plumber & Geyser Installations in Mitchell’s Plain, Cape Town' },
+  { path: '/', label: 'Home', title: 'Plumber in Sea Point, Cape Town' },
   { path: '/about', label: 'About Us', title: 'About Us' },
   { path: '/services', label: 'Services', title: 'Geyser Installations & Plumbing Services' },
   { path: '/contact', label: 'Contact', title: 'Contact Us' },

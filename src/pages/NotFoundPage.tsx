@@ -11,7 +11,7 @@ export default function NotFoundPage() {
         <div className="container-site flex min-h-[70vh] flex-col items-start justify-center py-24">
           <Eyebrow tone="dark">404</Eyebrow>
           <h1 className="display mt-5 text-[clamp(3rem,9vw,7rem)] text-white">
-            This pipe leads <span className="text-signal-400">nowhere.</span>
+            This pipe leads <span className="text-plum-400">nowhere.</span>
           </h1>
           <p className="mt-6 max-w-md text-lg text-navy-100">
             The page you’re after doesn’t exist. Let’s get you back on track.

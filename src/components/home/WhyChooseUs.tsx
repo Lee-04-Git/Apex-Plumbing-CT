@@ -1,178 +1,174 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
-import { projects, site } from '../../config/site'
+import { motion } from 'framer-motion'
+import type { ReactNode } from 'react'
+import { BANNER_WIDTHS, banners, homeImages, reviews, site } from '../../config/site'
 import { expo } from '../ui/motion'
-import { Eyebrow, LineReveal, Photo, Reveal } from '../ui/primitives'
-
-/** A job photo, framed on its subject, with the job's name and suburb for the caption. */
-const job = (slug: string, img: number, position: string) => {
-  const p = projects.find((x) => x.slug === slug)!
-  return { image: { ...p.images[img], position }, job: p.title, place: p.place }
-}
+import { Eyebrow, LineReveal, Photo, Reveal, Stars } from '../ui/primitives'
 
 /**
- * Reasons drawn only from verified material: the business's own description,
- * its services flyer, its job posts and the supplied customer reviews.
- * Each one is paired with a real job photo.
+ * Reasons drawn only from verified material: the business's own words on its ProCompare
+ * profile and the supplied customer reviews.
  */
 const reasons = [
   {
-    tag: 'Speciality',
-    title: 'Geyser specialists',
-    text: 'Electric and solar geyser installations are the core of the business: new installs, replacements, relocations and electric-to-solar conversions.',
-    ...job('solar-diepriver', 0, '50% 45%'),
+    tag: 'Range',
+    title: 'Noisy pipes to full renovations',
+    text: 'All sorts of plumbing issues, from noisy pipes to full-on renovations, with geyser installations covered too.',
   },
   {
     tag: 'Communication',
-    title: 'Prompt, clear contact',
-    text: 'Customers mention the prompt response, the assessment and a straightforward quotation process.',
-    ...job('kitchen-tap', 0, '45% 55%'),
+    title: 'Answers the call',
+    text: `Customers say ${site.owner.name} “answers your call straight away, even on weekends.”`,
   },
   {
     tag: 'Workmanship',
-    title: 'Genuine, tidy work',
-    text: '"Quick fast and genuine workmanship." "Work was done excellent." That\'s how customers have described it.',
-    ...job('solar-maitland', 2, '45% 60%'),
+    title: 'Neat, thorough work',
+    text: '“Prompt, professional, thorough … they left the place neat and clean.”',
   },
   {
     tag: 'Local',
     title: `Rooted in ${site.location.area}`,
     text: `Based in ${site.location.suburb}, but we travel all over Cape Town, the Atlantic Seaboard, and the Southern Suburbs to help out clients wherever we're needed.`,
-    ...job('geyser-relocation', 0, '30% 45%'),
   },
 ]
 
+const featured = reviews.find((r) => r.name === 'Kevin Neeson') ?? reviews[0]
+
+function CardText({ i, tone }: { i: number; tone: 'light' | 'dark' }) {
+  const r = reasons[i]
+  return (
+    <>
+      <p className={`label ${tone === 'dark' ? 'text-plum-300' : 'text-plum-200'}`}>{r.tag}</p>
+      <h3 className="mt-3 text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.05] font-extrabold text-white">{r.title}</h3>
+      <p className="mt-4 max-w-md text-lg leading-relaxed text-navy-100">{r.text}</p>
+    </>
+  )
+}
+
 /**
- * Sticky photo + scrolling reasons. On large screens the photo stays put and changes to match
- * the reason in the middle of the screen; on small screens each reason shows its own photo.
+ * Each card wipes in from the left. The in-view trigger sits on the (unclipped) list: Chrome's
+ * IntersectionObserver treats a fully clipped element as invisible, so it would never fire.
+ */
+function Card({
+  children,
+  bg,
+  className = '',
+  delay = 0,
+}: {
+  children: ReactNode
+  /** Background class for the card itself (kept off the outer element so the cut corner stays clear). */
+  bg: string
+  className?: string
+  delay?: number
+}) {
+  return (
+    <motion.li
+      variants={{
+        hidden: { opacity: 0, y: 30, clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)' },
+        shown: {
+          opacity: 1,
+          y: 0,
+          clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+          transition: { duration: 1, ease: expo, delay },
+        },
+      }}
+      className={`group flex ${className}`}
+    >
+      {/* the wipe animates clip-path on the outer element, so the cut corner lives on this one */}
+      <div className={`cut relative isolate flex min-h-[22rem] w-full flex-col justify-end overflow-hidden rounded-sm p-7 sm:p-9 [--cut:2.25rem] lg:min-h-[inherit] ${bg}`}>
+        {children}
+      </div>
+    </motion.li>
+  )
+}
+
+/**
+ * Four reasons as an angled bento grid that zig-zags: photo, solid, solid, photo. A real
+ * customer quote sits beside the heading.
  */
 export function WhyChooseUs() {
-  const [active, setActive] = useState(0)
-  const items = useRef<(HTMLLIElement | null)[]>([])
-
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(Number((e.target as HTMLElement).dataset.index))
-        }),
-      { rootMargin: '-45% 0px -45% 0px' },
-    )
-    items.current.forEach((el) => el && io.observe(el))
-    return () => io.disconnect()
-  }, [])
-
-  const current = reasons[active]
-
   return (
     <section aria-labelledby="why-title" className="bg-mist-50 py-24 sm:py-32">
-      <div className="container-site grid gap-x-16 lg:grid-cols-12">
-        {/* sticky photo (desktop) */}
-        <div className="hidden lg:col-span-5 lg:block">
-          <div className="sticky top-28 flex h-[calc(100svh-9rem)] max-h-[46rem] min-h-[34rem] flex-col justify-center">
-            <div className="relative">
-              <div aria-hidden="true" className="absolute inset-0 translate-x-5 translate-y-5 rounded-[2rem] bg-wave-100" />
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-mist-200">
-                <AnimatePresence initial={false} mode="popLayout">
-                  <motion.div
-                    key={active}
-                    initial={{ opacity: 0, scale: 1.06 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.7, ease: expo }}
-                    className="absolute inset-0"
-                  >
-                    <Photo
-                      {...current.image}
-                      sizes="(min-width: 1320px) 480px, 38vw"
-                      className="size-full object-cover contrast-[1.06] saturate-[1.1]"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-                <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-navy-950/45 to-transparent" />
-                <div aria-hidden="true" className="absolute inset-0 rounded-[2rem] ring-1 ring-black/5 ring-inset" />
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.p
-                    key={active}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.35, ease: expo }}
-                    className="absolute bottom-5 left-5 max-w-[80%] rounded-2xl bg-white/95 px-4 py-3 shadow-[0_10px_24px_-12px_rgb(10_27_48/0.55)] backdrop-blur"
-                  >
-                    <span className="block text-sm leading-tight font-semibold text-navy-950">{current.job}</span>
-                  </motion.p>
-                </AnimatePresence>
-              </div>
-            </div>
-            <div aria-hidden="true" className="mt-10 flex gap-2">
-              {reasons.map((r, i) => (
-                <span key={r.title} className="h-1 flex-1 overflow-hidden rounded-full bg-navy-950/10">
-                  <span
-                    className={`block h-full origin-left rounded-full bg-signal-500 transition-transform duration-500 ease-out-expo ${
-                      i <= active ? 'scale-x-100' : 'scale-x-0'
-                    }`}
-                  />
-                </span>
-              ))}
-            </div>
+      <div className="container-site">
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-7">
+            <Eyebrow>Why choose us?</Eyebrow>
+            <h2 id="why-title" className="display mt-5 text-[clamp(2.6rem,5.6vw,4.75rem)] text-navy-950">
+              <LineReveal
+                lines={[
+                  'Why call',
+                  <span key="p" className="text-brand-600">
+                    Apex Plumbing CT?
+                  </span>,
+                ]}
+              />
+            </h2>
+            <Reveal delay={0.1}>
+              <p className="mt-6 max-w-lg text-lg leading-relaxed text-steel-600">
+                A local plumbing business that focuses on doing the job properly and keeping you in the loop.
+              </p>
+            </Reveal>
           </div>
-        </div>
 
-        {/* heading + reasons */}
-        <div className="lg:col-span-7">
-          <Eyebrow>Why choose us?</Eyebrow>
-          <h2 id="why-title" className="display mt-5 text-[clamp(2.6rem,5.6vw,4.75rem)] text-navy-950">
-            <LineReveal
-              lines={[
-                'Why call',
-                <span key="p" className="text-brand-600">
-                  Apex Plumbing CT?
-                </span>,
-              ]}
-            />
-          </h2>
-          <Reveal delay={0.1}>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-steel-600">
-              A local plumbing business that focuses on doing the job properly and keeping you in the loop.
-            </p>
+          <Reveal delay={0.2} className="lg:col-span-5">
+            <figure className="relative border-l-4 border-plum-500 bg-white py-6 pr-6 pl-7 shadow-[0_20px_40px_-28px_rgb(13_18_56/0.35)]">
+              <Stars rating={featured.rating} />
+              <blockquote className="mt-3 font-display text-xl leading-snug font-bold text-navy-950">
+                “{featured.text}”
+              </blockquote>
+              <figcaption className="label mt-4 text-steel-500">{featured.name} · Customer review</figcaption>
+            </figure>
           </Reveal>
-
-          <ol className="mt-16 space-y-16 sm:space-y-20 lg:mt-28 lg:space-y-32 lg:pb-[18vh]">
-            {reasons.map((r, i) => (
-              <li
-                key={r.title}
-                ref={(el) => {
-                  items.current[i] = el
-                }}
-                data-index={i}
-                className={`transition-opacity duration-500 ${i === active ? 'lg:opacity-100' : 'lg:opacity-35'}`}
-              >
-                <Reveal>
-                  <figure className="mb-7 lg:hidden">
-                    <div className="aspect-[4/3] overflow-hidden rounded-3xl bg-mist-200 ring-1 ring-black/5 ring-inset">
-                      <Photo
-                        {...r.image}
-                        sizes="(min-width: 640px) 80vw, 100vw"
-                        className="size-full object-cover contrast-[1.06] saturate-[1.1]"
-                      />
-                    </div>
-                    <figcaption className="mt-3 text-sm text-steel-500">
-                      <span className="font-semibold text-navy-950">{r.job}</span>
-                    </figcaption>
-                  </figure>
-                  <p className="flex items-center gap-4 text-sm font-semibold text-brand-600">
-                    <span className="font-mono">0{i + 1}</span>
-                    <span aria-hidden="true" className="h-px w-10 bg-brand-600/40" />
-                    <span className="label">{r.tag}</span>
-                  </p>
-                  <h3 className="display mt-5 text-[clamp(2.1rem,4.2vw,3.5rem)] text-navy-950">{r.title}</h3>
-                  <p className="mt-5 max-w-xl text-lg leading-relaxed text-steel-600">{r.text}</p>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
         </div>
+
+        <motion.ul
+          initial="hidden"
+          whileInView="shown"
+          viewport={{ once: true, amount: 0.15 }}
+          className="mt-14 grid gap-4 sm:gap-5 lg:mt-20 lg:grid-cols-12"
+        >
+          <Card bg="bg-navy-950" className="lg:col-span-7 lg:min-h-[26rem]">
+            <Photo
+              {...homeImages.renovation}
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="absolute inset-0 -z-10 size-full object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105"
+            />
+            <div aria-hidden="true" className="absolute inset-0 -z-10 bg-linear-to-t from-navy-950 via-navy-950/70 to-navy-950/10" />
+            <CardText i={0} tone="dark" />
+          </Card>
+
+          <Card delay={0.1} bg="bg-navy-950" className="lg:col-span-5">
+            <Photo
+              {...homeImages.communication}
+              sizes="(min-width: 1024px) 42vw, 100vw"
+              className="absolute inset-0 -z-10 size-full object-cover brightness-150 contrast-[1.1] transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105"
+            />
+            <div aria-hidden="true" className="absolute inset-0 -z-10 bg-linear-to-t from-navy-950 via-navy-950/45 to-transparent" />
+            <CardText i={1} tone="dark" />
+          </Card>
+
+          <Card delay={0.05} bg="bg-plum-600" className="lg:col-span-5">
+            <Photo
+              {...homeImages.workmanship}
+              sizes="(min-width: 1024px) 42vw, 100vw"
+              className="absolute inset-0 -z-10 size-full object-cover grayscale-[0.3] transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105"
+            />
+            <div aria-hidden="true" className="absolute inset-0 -z-10 bg-linear-to-t from-plum-600 via-plum-600/80 to-plum-500/35" />
+            <CardText i={2} tone="light" />
+          </Card>
+
+          <Card delay={0.15} bg="bg-navy-950" className="lg:col-span-7 lg:min-h-[26rem]">
+            <Photo
+              base={banners.home.base}
+              widths={BANNER_WIDTHS}
+              alt={banners.home.alt}
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="absolute inset-0 -z-10 size-full object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105"
+              position="50% 55%"
+            />
+            <div aria-hidden="true" className="absolute inset-0 -z-10 bg-linear-to-t from-navy-950 via-navy-950/60 to-plum-600/20" />
+            <CardText i={3} tone="dark" />
+          </Card>
+        </motion.ul>
       </div>
     </section>
   )

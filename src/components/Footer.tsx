@@ -5,7 +5,7 @@ import { defaultWhatsAppMessage, mailtoHref, telHref, whatsappHref } from '../li
 import { smoothScrollTo } from '../lib/scroll'
 import { Wordmark } from './Header'
 import { FacebookIcon, InstagramIcon, LinkedInIcon, WhatsAppIcon } from './ui/Icons'
-import { WaveEdge } from './ui/primitives'
+import { FaintImage, SlantEdge } from './ui/primitives'
 
 const year = new Date().getFullYear()
 
@@ -13,29 +13,42 @@ const year = new Date().getFullYear()
 export function Footer() {
   return (
     <footer className="relative">
-      <div className="relative bg-navy-950 pt-16 pb-28 text-navy-300 lg:pb-10">
-        <WaveEdge className="text-navy-950" />
+      <div className="relative isolate bg-navy-950 pt-16 pb-28 text-navy-300 lg:pb-10">
+        <SlantEdge className="text-navy-950" />
+        {/* a faint photo and an oversized droplet watermark give the footer its letterhead feel */}
+        <FaintImage image="footer" tone="dark" side="right" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <img
+            src={site.logo.light}
+            alt=""
+            loading="lazy"
+            className="absolute -right-16 -bottom-40 w-[30rem] max-w-none -rotate-12 opacity-[0.08] sm:w-[40rem] lg:-right-10 lg:-bottom-56"
+          />
+        </div>
         <div className="container-site grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Link to="/" className="group inline-block" aria-label={`${site.name}: home`}>
-              <Wordmark tone="dark" logo={false} />
+              <Wordmark tone="dark" />
             </Link>
-            <p className="mt-6 max-w-sm leading-relaxed">{site.description}</p>
+            <p className="mt-6 font-display text-2xl font-extrabold tracking-[-0.02em] text-plum-300 [font-stretch:112%]">
+              {site.tagline}.
+            </p>
+            <p className="mt-3 max-w-sm leading-relaxed">{site.description}</p>
                           <p className="label mt-4 text-navy-300/80">
                 Based in {site.location.suburb}, {site.location.area}
               </p>
           </div>
 
           <nav aria-label="Footer" className="lg:col-span-3">
-            <p className="label text-signal-400">Explore</p>
+            <p className="label text-plum-400">Explore</p>
             <ul className="mt-4 grid gap-1">
               {navLinks.map((l) => (
                 <li key={l.path}>
                   <Link
                     to={l.path}
-                    className="group inline-flex min-h-10 items-center gap-2 font-medium text-mist-50 transition-colors hover:text-signal-300"
+                    className="group inline-flex min-h-10 items-center gap-2 font-medium text-mist-50 transition-colors hover:text-plum-300"
                   >
-                    <span className="h-px w-0 bg-signal-400 transition-[width] duration-300 group-hover:w-4" />
+                    <span className="h-px w-0 bg-plum-400 transition-[width] duration-300 group-hover:w-4" />
                     {l.label}
                   </Link>
                 </li>
@@ -44,20 +57,20 @@ export function Footer() {
           </nav>
 
                       <div className="lg:col-span-4">
-              <p className="label text-signal-400">Get in touch</p>
+              <p className="label text-plum-400">Get in touch</p>
               <ul className="mt-4 grid gap-1 text-mist-50">
                 <li>
-                  <a href={telHref} className="inline-flex min-h-10 items-center gap-3 font-medium hover:text-signal-300">
-                    <Phone aria-hidden="true" className="size-4 text-signal-400" />
+                  <a href={telHref} className="inline-flex min-h-10 items-center gap-3 font-medium hover:text-plum-300">
+                    <Phone aria-hidden="true" className="size-4 text-plum-400" />
                     {site.phone.display}
                   </a>
                 </li>
                 <li>
                   <a
                     href={mailtoHref}
-                    className="inline-flex min-h-10 items-center gap-3 font-medium [overflow-wrap:anywhere] hover:text-signal-300"
+                    className="inline-flex min-h-10 items-center gap-3 font-medium [overflow-wrap:anywhere] hover:text-plum-300"
                   >
-                    <Mail aria-hidden="true" className="size-4 shrink-0 text-signal-400" />
+                    <Mail aria-hidden="true" className="size-4 shrink-0 text-plum-400" />
                     {site.email.address}
                   </a>
                 </li>
@@ -95,7 +108,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${s.label} (opens in a new tab)`}
-                      className={`flex size-12 items-center justify-center rounded-full text-white ring-4 ring-white/5 transition-[transform,box-shadow] duration-500 ease-out-expo hover:-translate-y-1 hover:scale-105 active:scale-95 ${s.tone}`}
+                      className={`flex size-12 items-center justify-center rounded-sm text-white ring-4 ring-white/5 transition-[transform,box-shadow] duration-500 ease-out-expo hover:-translate-y-1 hover:scale-105 active:scale-95 ${s.tone}`}
                     >
                       {s.icon}
                     </a>
@@ -105,10 +118,13 @@ export function Footer() {
             </div>
         </div>
 
-        <div className="container-site mt-14 flex flex-col gap-6 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-site mt-14">
+          <div className="border-t border-white/10" />
+        </div>
+        <div className="container-site mt-8 flex flex-col gap-6 text-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <p>
-              © {year} {site.name}. Job photos by {site.name}.
+              © {year} {site.name}. Some photos courtesy of Unsplash.
             </p>
           </div>
           <button
@@ -117,7 +133,7 @@ export function Footer() {
             className="group inline-flex min-h-11 cursor-pointer items-center gap-3 self-start text-mist-50 sm:self-auto"
           >
             Back to top
-            <span className="flex size-10 items-center justify-center rounded-full ring-1 ring-mist-50/25 transition-[transform,background-color] duration-500 ease-out-expo group-hover:-translate-y-1 group-hover:bg-signal-500 group-hover:ring-brand-500">
+            <span className="flex size-10 items-center justify-center rounded-sm ring-1 ring-mist-50/25 transition-[transform,background-color] duration-500 ease-out-expo group-hover:-translate-y-1 group-hover:bg-plum-500 group-hover:ring-brand-500">
               <ArrowUp aria-hidden="true" className="size-4" />
             </span>
           </button>

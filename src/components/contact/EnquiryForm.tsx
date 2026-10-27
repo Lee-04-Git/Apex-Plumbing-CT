@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, CheckCircle2, ChevronDown, Mail, Pencil } from 'lucide-react'
 import { useId, useRef, useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { moreServices, services, site } from '../../config/site'
@@ -48,9 +47,8 @@ function FieldError({ id, message }: { id: string; message?: string }) {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="flex items-center gap-1.5 overflow-hidden pt-1.5 text-sm text-red-700"
+          className="overflow-hidden pt-1.5 text-sm font-medium text-red-700"
         >
-          <AlertCircle aria-hidden="true" className="size-4 shrink-0" />
           {message}
         </motion.p>
       )}
@@ -61,8 +59,9 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 /**
  * Enquiry form with no backend: it writes the message out and opens WhatsApp or the visitor's
  * email app with it, ready to send. It says plainly that nothing is sent until they press Send.
+ * `bare` drops the card styling, for when the form sits inside another panel.
  */
-export function EnquiryForm() {
+export function EnquiryForm({ bare = false }: { bare?: boolean }) {
   const uid = useId()
   const [values, setValues] = useState<Values>(empty)
   const [errors, setErrors] = useState<Errors>({})
@@ -125,7 +124,7 @@ export function EnquiryForm() {
     'aria-describedby': errors[k] ? `${uid}-${k}-error` : undefined,
   })
   const input = (k: keyof Values) =>
-    `mt-2 block w-full rounded-xl border bg-white px-4 py-3 text-base text-navy-950 placeholder:text-steel-500/70 transition-[border-color,box-shadow] focus:outline-none focus:ring-4 ${
+    `mt-2 block w-full rounded-sm border bg-white px-4 py-3 text-base text-navy-950 placeholder:text-steel-500/70 transition-[border-color,box-shadow] focus:outline-none focus:ring-4 ${
       errors[k]
         ? 'border-red-500 focus:ring-red-500/15'
         : 'border-mist-300 hover:border-steel-500 focus:border-brand-500 focus:ring-brand-400/20'
@@ -133,7 +132,13 @@ export function EnquiryForm() {
   const labelClass = 'text-sm font-semibold text-navy-950'
 
   return (
-    <div className="rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgb(10_27_48/0.05),0_30px_60px_-40px_rgb(10_27_48/0.35)] ring-1 ring-navy-950/[0.06] sm:p-10">
+    <div
+      className={
+        bare
+          ? ''
+          : 'cut rounded-sm border-t-4 border-plum-500 bg-white p-6 shadow-[0_1px_2px_rgb(13_18_56/0.05),0_30px_60px_-40px_rgb(13_18_56/0.35)] ring-1 ring-navy-950/[0.06] [--cut:2rem] sm:p-10'
+      }
+    >
       <AnimatePresence mode="wait" initial={false}>
         {sentTo ? (
           <motion.div
@@ -147,8 +152,7 @@ export function EnquiryForm() {
             transition={{ duration: 0.35, ease }}
             className="focus:outline-none"
           >
-            <CheckCircle2 aria-hidden="true" className="size-12 text-whatsapp-dark" />
-            <h3 className="mt-5 text-2xl font-bold tracking-[-0.02em] text-navy-950">
+            <h3 className="text-2xl font-bold tracking-[-0.02em] text-navy-950">
               Your message is ready in {sentTo === 'whatsapp' ? 'WhatsApp' : 'your email app'}
             </h3>
             <p className="mt-3 max-w-md leading-relaxed text-steel-600">
@@ -162,11 +166,10 @@ export function EnquiryForm() {
                 rel="noopener noreferrer"
                 className={buttonClass(sentTo === 'whatsapp' ? 'whatsapp' : 'navy')}
               >
-                {sentTo === 'whatsapp' ? <WhatsAppIcon className="size-4" /> : <Mail aria-hidden="true" className="size-4" />}
+                {sentTo === 'whatsapp' && <WhatsAppIcon className="size-4" />}
                 Open again
               </a>
               <button type="button" onClick={() => setSentTo(null)} className={buttonClass('outline')}>
-                <Pencil aria-hidden="true" className="size-4" />
                 Edit enquiry
               </button>
             </div>
@@ -186,7 +189,7 @@ export function EnquiryForm() {
             <h2 id={`${uid}-title`} className="text-[1.75rem] leading-tight font-bold tracking-[-0.03em] text-navy-950">
               Send an enquiry
             </h2>
-            <p className="mt-2 text-steel-600">A few details and we can take a look at the job.</p>
+            <p className="mt-2 text-steel-600">A few details and the job can be assessed and quoted.</p>
 
             <div className="mt-8 grid gap-5 sm:grid-cols-2">
               <div>
@@ -241,9 +244,10 @@ export function EnquiryForm() {
                     </option>
                   ))}
                 </select>
-                <ChevronDown
+                {/* drawn chevron for the native select */}
+                <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute top-[calc(50%+4px)] right-4 size-5 -translate-y-1/2 text-steel-500"
+                  className="pointer-events-none absolute top-[calc(50%+2px)] right-5 size-2 -translate-y-1/2 rotate-45 border-r-2 border-b-2 border-steel-500"
                 />
               </div>
               <FieldError id={`${uid}-service-error`} message={errors.service} />
@@ -270,7 +274,6 @@ export function EnquiryForm() {
                 Send via WhatsApp
               </button>
               <button type="button" onClick={() => send('email')} className={`${buttonClass('outline', 'lg')} sm:flex-1`}>
-                <Mail aria-hidden="true" className="size-4" />
                 Send via email
               </button>
             </div>

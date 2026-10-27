@@ -1,60 +1,67 @@
 @import 'tailwindcss';
 
 /*
- * "Harbour & Signal" palette: clean and confident, like a well-kept work van.
- *  • navy: trust, text and dark sections (from the logo's navy)
- *  • brand: a clear water blue for accents, links and focus
- *  • signal: a vivid orange for calls to action, always with navy text
- *  • wave: light water blue for fills and tints
- *  • mist: cool, crisp whites so photos and colour stand out
- * Contrast (WCAG): navy-950/mist-100 16:1 · steel-600/mist-100 7.5:1 · brand-600/mist-100 5.2:1 ·
- * navy-950/signal-500 5.9:1 · signal-400/navy-950 7.4:1 · navy-300/navy-950 9:1 · white/navy-800 12:1 ·
- * navy-950/whatsapp 9.6:1
+ * "Apex Indigo & Plum" palette, taken from the droplet logo.
+ *  • navy: deep indigo navy from the logo, for text and dark sections
+ *  • brand: indigo-violet for links, eyebrows and focus on light backgrounds
+ *  • plum: the logo's purple, for calls to action (always with white text) and accents on dark
+ *  • lilac: soft violet tints for fills and backgrounds
+ *  • mist: cool, faintly violet whites so photos stand out
+ * Contrast (WCAG): navy-950/mist-100 17:1 · steel-600/mist-100 8:1 · brand-600/mist-100 7:1 ·
+ * white/plum-500 7.4:1 · plum-300/navy-950 9:1 · navy-300/navy-950 8.5:1 · navy-950/whatsapp 10:1
  */
 @theme {
-  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  --color-navy-950: #0a1b30;
-  --color-navy-900: #0f2541;
-  --color-navy-800: #163356;
-  --color-navy-700: #1e4470;
-  --color-navy-600: #2a5a91;
-  --color-navy-300: #a6b7cc;
-  --color-navy-200: #c9d5e4;
-  --color-navy-100: #e4ebf3;
+  /* Squarer corners than a typical "friendly" trade site: Apex is sharp and angular */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.625rem;
+  --radius-3xl: 0.75rem;
 
-  --color-brand-50: #eef5ff;
-  --color-brand-100: #d9e8ff;
-  --color-brand-200: #b4d2ff;
-  --color-brand-300: #80b3ff;
-  --color-brand-400: #4a90f0;
-  --color-brand-500: #2675e0;
-  --color-brand-600: #1662d0;
-  --color-brand-700: #114fa8;
+  --color-navy-950: #0d1238;
+  --color-navy-900: #141a4a;
+  --color-navy-800: #1b245e;
+  --color-navy-700: #232f74;
+  --color-navy-600: #33409a;
+  --color-navy-300: #a9aed6;
+  --color-navy-200: #cbcee8;
+  --color-navy-100: #e7e8f5;
 
-  --color-signal-100: #ffebdd;
-  --color-signal-200: #ffd3b3;
-  --color-signal-300: #ffb07f;
-  --color-signal-400: #ff8c47;
-  --color-signal-500: #f76c1e;
-  --color-signal-600: #da570d;
+  --color-brand-50: #f1f0fc;
+  --color-brand-100: #e2dff9;
+  --color-brand-200: #c5bff2;
+  --color-brand-300: #a198e8;
+  --color-brand-400: #7c6fdc;
+  --color-brand-500: #5f50cc;
+  --color-brand-600: #4b3fb8;
+  --color-brand-700: #3b3196;
 
-  --color-wave-100: #e0f4fb;
-  --color-wave-200: #bde7f6;
-  --color-wave-300: #8ad5ee;
-  --color-wave-400: #45bce3;
-  --color-wave-500: #1a9fcc;
-  --color-wave-700: #0c6a8a;
+  --color-plum-100: #f7e9f8;
+  --color-plum-200: #edcdf0;
+  --color-plum-300: #dfa6e4;
+  --color-plum-400: #c77ad0;
+  --color-plum-500: #8b2a94;
+  --color-plum-600: #741f7c;
 
-  --color-mist-50: #fcfdfe;
-  --color-mist-100: #f2f5f9;
-  --color-mist-200: #e4eaf1;
-  --color-mist-300: #cfd8e3;
+  --color-lilac-100: #f2edf9;
+  --color-lilac-200: #e3d6f2;
+  --color-lilac-300: #c9b2e6;
+  --color-lilac-400: #a986d6;
+  --color-lilac-500: #8a5fc4;
+  --color-lilac-700: #5a3790;
 
-  --color-steel-500: #586377;
-  --color-steel-600: #445066;
+  --color-mist-50: #fcfcfe;
+  --color-mist-100: #f4f4f9;
+  --color-mist-200: #e8e8f1;
+  --color-mist-300: #d4d4e3;
+
+  --color-steel-500: #5c5e76;
+  --color-steel-600: #484a62;
 
   --color-whatsapp: #25d366;
   --color-whatsapp-dark: #1fb457;
@@ -97,7 +104,9 @@
   h3,
   h4 {
     @apply font-display;
-    letter-spacing: -0.03em;
+    /* Archivo's width axis: slightly expanded headings read as solid and engineered */
+    font-stretch: 112%;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
   p {
@@ -109,10 +118,10 @@
   :focus-visible {
     outline: 3px solid var(--color-brand-500);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: 2px;
   }
   ::selection {
-    @apply bg-signal-200 text-navy-950;
+    @apply bg-plum-200 text-navy-950;
   }
 }
 
@@ -120,47 +129,31 @@
   .container-site {
     @apply mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-10;
   }
-  /* Job-ticket labels: small monospaced caps, like a work order */
+  /* Small monospaced caps for labels and eyebrows */
   .label {
-    @apply font-mono text-[0.75rem] font-medium tracking-[0.14em] uppercase;
+    @apply font-mono text-[0.75rem] font-medium tracking-[0.16em] uppercase;
   }
   /* Display headings share one rhythm; size is set per use */
   .display {
-    @apply font-display leading-[0.92] font-extrabold tracking-[-0.045em];
+    @apply font-display leading-[0.95] font-extrabold tracking-[-0.025em];
+    font-stretch: 115%;
   }
-  /* Faint blueprint grid used behind heroes */
-  .blueprint {
-    background-image:
-      linear-gradient(to right, rgb(10 27 48 / 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(10 27 48 / 0.06) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse 70% 70% at 70% 30%, black 20%, transparent 75%);
+  /* Fine diagonal hatching behind heroes and dark panels */
+  .hatch {
+    background-image: repeating-linear-gradient(-60deg, rgb(13 18 56 / 0.06) 0 1px, transparent 1px 22px);
+    mask-image: linear-gradient(105deg, transparent 15%, black 60%, transparent 95%);
   }
-  .blueprint-dark {
-    background-image:
-      linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black 10%, transparent 75%);
+  .hatch-dark {
+    background-image: repeating-linear-gradient(-60deg, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 22px);
+    mask-image: linear-gradient(105deg, transparent 10%, black 55%, transparent 95%);
   }
-  /* Perforated edge on job-ticket cards */
-  .ticket {
-    --hole: 7px;
-    mask:
-      radial-gradient(circle var(--hole) at 0 50%, transparent 98%, black) left / 51% 100% no-repeat,
-      radial-gradient(circle var(--hole) at 100% 50%, transparent 98%, black) right / 51% 100% no-repeat;
+  /* "Apex" corner: the top-right corner is cut at an angle, like the peak in the name */
+  .cut {
+    clip-path: polygon(0 0, calc(100% - var(--cut, 3rem)) 0, 100% var(--cut, 3rem), 100% 100%, 0 100%);
   }
-}
-
-/* Drop cap for editorial body copy */
-.drop-cap::first-letter {
-  float: left;
-  margin: 0.06em 0.12em 0 0;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 4.2em;
-  line-height: 0.8;
-  color: var(--color-brand-600);
+  .cut-sm {
+    --cut: 1.25rem;
+  }
 }
 
 /* Respect reduced motion everywhere */
